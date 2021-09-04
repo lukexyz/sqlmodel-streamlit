@@ -4,11 +4,13 @@ import streamlit as st
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 
-# class Hero(SQLModel, table=True, extend_existing=True):
-#     id: Optional[int] = Field(default=None, primary_key=True)
-#     name: str
-#     secret_name: str
-#     age: Optional[int] = None
+class Hero(SQLModel, table=True):
+    __table_args__ = {'extend_existing': True}  # required for streamlit refreshing
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    secret_name: str
+    age: Optional[int] = None
+
 
 sqlite_file_name = 'database.db'
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -39,20 +41,22 @@ def select_heros():
         print('='*60)
         print(heroes)
         print('='*60)
+        st.text(heroes)
+        st.text(len(heroes))
+
 
 
 
 def main():
-    st.text('🦄 SQLModel Demo')
+    st.title('🦄 SQLModel Demo')
     if st.button('Create db'): 
-        st.text('hi')
-        #create_db_and_tables()
+        st.code('create_db_and_tables()')
+        create_db_and_tables()
     if st.button('Add heros'): 
-        st.text('hi')
-        #create_heroes()
+        st.text('create_heroes()')
+        create_heroes()
     if st.button('Select Heroes'):
-        st.text('hi')
-        #select_heros()
+        select_heros()
 
 
 if __name__ == '__main__':
