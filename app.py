@@ -1,6 +1,7 @@
 from typing import Optional
 import pandas as pd
 import streamlit as st
+import os
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 
@@ -23,21 +24,13 @@ def create_db_and_tables():
 
 
 def create_heroes():
-    hero_1 = Hero(name="Deadpond", secret_name="Dive Wilson")
-    hero_2 = Hero(name="Spider-Boy", secret_name="Pedro Parqueador")
-    hero_3 = Hero(name="Rusty-Man", secret_name="Tommy Sharp", age=48)
-    hero_4 = Hero(name="Tarantula", secret_name="Natalia Roman-on", age=32)
-    hero_5 = Hero(name="Black Lion", secret_name="Trevor Challa", age=35)
-    hero_6 = Hero(name="Dr. Weird", secret_name="Steve Weird", age=36)
-    hero_7 = Hero(name="Captain North America", secret_name="Esteban Rogelios", age=93)
+    hero_1 = Hero(name="Rusty-Man", secret_name="Tommy Sharp", age=36)
+    hero_2 = Hero(name="Tarantula", secret_name="Natalia Roman-on", age=26)
+    hero_3 = Hero(name="Dr. Weird", secret_name="Steve Weird", age=33)
     with Session(engine) as session:
         session.add(hero_1)
         session.add(hero_2)
         session.add(hero_3)
-        session.add(hero_4)
-        session.add(hero_5)
-        session.add(hero_6)
-        session.add(hero_7)
         session.commit()
 
 
@@ -49,10 +42,11 @@ def get_db_size():
 
 def select_heros():
     with Session(engine) as session:
-        heroes = session.exec(select(Hero)).all()
-        for hero in heroes:
+        statement = select(Hero).where(Hero.age <= 35)
+        results = session.exec(statement)
+        for hero in results:
             st.text(hero)
-        st.text(len(heroes))
+        #st.text(len(results))
 
 
 def show_table():
@@ -61,7 +55,7 @@ def show_table():
         st.table(pd.DataFrame([s.dict() for s in heroes[-5:]]))
 
 
-def delete_heroes():
+def delete_db():
     with Session(engine) as session:
         heroes = session.exec(select(Hero)).all()
         for hero in heroes:
@@ -70,30 +64,53 @@ def delete_heroes():
     st.text("Deleted all rows")  
 
 
+def write_new_row():
+
+    with st.form('new_row'):
+        name_input = st.text_input('Name', value="Don Johnson")
+        secret_name = st.text_input('Secret alias', value="Dr. Jon")
+
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            hero = Hero(name=name_input, secret_name=secret_name, age=23)
+            st.write('submitted')
+            with Session(engine) as session:
+                session.add(hero)
+                session.commit()
+    st.write("Outside the form")
+
+
 # ====================================== main ====================================== #
 
 def main():
+        
     st.title('🦄 SQLModel Demo')
-    header = st.empty()
+
+
 
     b1, b2, b3, b4= st.columns(4)
-    if b1.button("Clear db"):
-        delete_heroes()
-    if b2.button('Create db'): 
-        create_db_and_tables()
-    if b3.button('+ Add 7 heros'): 
+    #if b1.button('Add Filter'):
+    #    pass
+        #select_heros()  # todo
+    if b4.button("♻️ Empty db"):
+        delete_db()
+    #if b2.button('Create db'): 
+    #    create_db_and_tables()
+    if b3.button('+ Add 3 rows'): 
         create_heroes()
-    if b4.button('Select Heroes'):
-        select_heros()
-    st.text(f'Database: {get_db_size()} rows')
+
+    if st.button("➡️ Insert Row"):
+        write_new_row()
 
     show_table()
-    header.metric(label="Temperature", value="70 °F", delta="1.2 °F")
+    col0, col1, col2 = st.columns(3)
+    file_size = os.path.getsize('database.db')
+    col1.metric("💾 database.db", f"{get_db_size()}", "total rows")
+    col2.metric("filesize", f"{file_size/1000:0.1f}", 'kb')
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Temperature", "70 °F", "1.2 °F")
-    col2.metric("Wind", "9 mph", "-8%")
-    col3.metric("Humidity", "86%", "4%")
+
+
+
 
 
 if __name__ == '__main__':
