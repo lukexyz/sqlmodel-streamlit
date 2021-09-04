@@ -76,13 +76,14 @@ def main():
     st.title('🦄 SQLModel Demo')
     header = st.empty()
 
-    if st.button("Clear db"):
+    b1, b2, b3, b4= st.columns(4)
+    if b1.button("Clear db"):
         delete_heroes()
-    if st.button('Create db'): 
+    if b2.button('Create db'): 
         create_db_and_tables()
-    if st.button('Add heros'): 
+    if b3.button('+ Add 7 heros'): 
         create_heroes()
-    if st.button('Select Heroes'):
+    if b4.button('Select Heroes'):
         select_heros()
     st.text(f'Database: {get_db_size()} rows')
 
