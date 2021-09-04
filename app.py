@@ -62,12 +62,29 @@ def select_heros():
 def show_table():
     with Session(engine) as session:
         heroes = session.exec(select(Hero)).all()
-        st.table(pd.DataFrame([s.dict() for s in heroes[:5]]))
+        st.table(pd.DataFrame([s.dict() for s in heroes[-5:]]))
+
+
+def delete_heroes():
+    with Session(engine) as session:
+        #results = session.exec(select(Hero))  
+        heroes = session.exec(select(Hero)).all()
+        for hero in heroes:
+            session.delete(hero)  
+        session.commit()  
+    st.text("Deleted all rows")  
+
+
+
+
+
 
 
 
 def main():
     st.title('🦄 SQLModel Demo')
+    if st.button("Clear db"):
+        delete_heroes()
     if st.button('Create db'): 
         create_db_and_tables()
     if st.button('Add heros'): 
