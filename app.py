@@ -46,6 +46,12 @@ def main():
 
 
 if __name__ == '__main__':
+    st.set_page_config(
+        page_title="SQLModel Demo",
+        page_icon="🦄",
+        layout="centered",
+        initial_sidebar_state="auto")
+    
     create_db_and_tables()
     create_heroes()
     main()
