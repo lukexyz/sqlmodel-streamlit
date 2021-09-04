@@ -4,11 +4,11 @@ import streamlit as st
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 
-class Hero(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    secret_name: str
-    age: Optional[int] = None
+# class Hero(SQLModel, table=True, extend_existing=True):
+#     id: Optional[int] = Field(default=None, primary_key=True)
+#     name: str
+#     secret_name: str
+#     age: Optional[int] = None
 
 sqlite_file_name = 'database.db'
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -35,14 +35,24 @@ def create_heroes():
 
 def select_heros():
     with Session(engine) as session:
-        statement = select(Hero)
-        results = session.exec(statement)
-
+        heroes = session.exec(select(Hero)).all()
+        print('='*60)
+        print(heroes)
+        print('='*60)
 
 
 
 def main():
-    st.text('SQLModel')
+    st.text('🦄 SQLModel Demo')
+    if st.button('Create db'): 
+        st.text('hi')
+        #create_db_and_tables()
+    if st.button('Add heros'): 
+        st.text('hi')
+        #create_heroes()
+    if st.button('Select Heroes'):
+        st.text('hi')
+        #select_heros()
 
 
 if __name__ == '__main__':
@@ -51,7 +61,8 @@ if __name__ == '__main__':
         page_icon="🦄",
         layout="centered",
         initial_sidebar_state="auto")
-    
-    create_db_and_tables()
-    create_heroes()
     main()
+
+    #create_db_and_tables()
+    #create_heroes()
+    #select_heros()
