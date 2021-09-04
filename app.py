@@ -30,7 +30,6 @@ def create_heroes():
     hero_5 = Hero(name="Black Lion", secret_name="Trevor Challa", age=35)
     hero_6 = Hero(name="Dr. Weird", secret_name="Steve Weird", age=36)
     hero_7 = Hero(name="Captain North America", secret_name="Esteban Rogelios", age=93)
-
     with Session(engine) as session:
         session.add(hero_1)
         session.add(hero_2)
@@ -39,7 +38,6 @@ def create_heroes():
         session.add(hero_5)
         session.add(hero_6)
         session.add(hero_7)
-
         session.commit()
 
 
@@ -48,12 +46,10 @@ def get_db_size():
         heroes = session.exec(select(Hero)).all()
     return len(heroes)
 
+
 def select_heros():
     with Session(engine) as session:
         heroes = session.exec(select(Hero)).all()
-        print('='*60)
-        print(heroes)
-        print('='*60)
         for hero in heroes:
             st.text(hero)
         st.text(len(heroes))
@@ -67,7 +63,6 @@ def show_table():
 
 def delete_heroes():
     with Session(engine) as session:
-        #results = session.exec(select(Hero))  
         heroes = session.exec(select(Hero)).all()
         for hero in heroes:
             session.delete(hero)  
@@ -75,14 +70,12 @@ def delete_heroes():
     st.text("Deleted all rows")  
 
 
-
-
-
-
-
+# ====================================== main ====================================== #
 
 def main():
     st.title('🦄 SQLModel Demo')
+    header = st.empty()
+
     if st.button("Clear db"):
         delete_heroes()
     if st.button('Create db'): 
@@ -92,8 +85,14 @@ def main():
     if st.button('Select Heroes'):
         select_heros()
     st.text(f'Database: {get_db_size()} rows')
-    show_table()
 
+    show_table()
+    header.metric(label="Temperature", value="70 °F", delta="1.2 °F")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Temperature", "70 °F", "1.2 °F")
+    col2.metric("Wind", "9 mph", "-8%")
+    col3.metric("Humidity", "86%", "4%")
 
 
 if __name__ == '__main__':
@@ -103,7 +102,3 @@ if __name__ == '__main__':
         layout="centered",
         initial_sidebar_state="auto")
     main()
-
-    #create_db_and_tables()
-    #create_heroes()
-    #select_heros()
