@@ -74,20 +74,17 @@ def write_new_row():
         if submitted:
             hero = Hero(name=name_input, secret_name=secret_name, age=23)
             st.write('submitted')
+
+            hero_1 = Hero(name="Rusty-Man", secret_name="Tommy Sharp", age=36)
             with Session(engine) as session:
-                session.add(hero)
+                session.add(hero_1)
                 session.commit()
-    st.write("Outside the form")
 
 
 # ====================================== main ====================================== #
 
 def main():
-        
     st.title('🦄 SQLModel Demo')
-
-
-
     b1, b2, b3, b4= st.columns(4)
     #if b1.button('Add Filter'):
     #    pass
@@ -107,10 +104,6 @@ def main():
     file_size = os.path.getsize('database.db')
     col1.metric("💾 database.db", f"{get_db_size()}", "total rows")
     col2.metric("filesize", f"{file_size/1000:0.1f}", 'kb')
-
-
-
-
 
 
 if __name__ == '__main__':
