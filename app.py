@@ -84,6 +84,7 @@ def write_new_row():
 # ====================================== main ====================================== #
 
 def main():
+    create_db_and_tables()
     st.title('🦄 SQLModel Demo')
     b1, b2, b3, b4= st.columns(4)
     #if b1.button('Add Filter'):
